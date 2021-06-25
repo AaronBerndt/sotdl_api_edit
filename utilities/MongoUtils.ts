@@ -17,44 +17,6 @@ async function connectToDatabase() {
   return db;
 }
 
-export async function fetchCollection(collectionName: string) {
-  try {
-    if (uri === undefined) {
-      throw "URI is undefined";
-    }
-
-    const database = await connectToDatabase();
-    const collection = database.collection(collectionName);
-    const data = await collection.find({}).toArray();
-
-    return data;
-  } catch (e) {
-    throw e;
-  }
-}
-
-export async function insertIntoCollection(
-  collectionName: string,
-  newDocuments: any
-) {
-  try {
-    if (uri === undefined) {
-      throw "URI is undefined";
-    }
-    if (newDocuments === undefined) {
-      throw "newDocuments is undefined";
-    }
-
-    const database = await connectToDatabase();
-    const collection = database.collection(collectionName);
-    await collection.insertMany(newDocuments, { ordered: true });
-
-    return { message: `Sucessfully Added new documents into ${collection}` };
-  } catch (e) {
-    throw e;
-  }
-}
-
 export async function updateCollection(
   collectionName: string,
   documentToUpdate: any,

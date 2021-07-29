@@ -15,7 +15,10 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
     if (request.method === "OPTIONS") {
       return response.status(200).end();
     }
-    const { action, afflictionName, _id } = request.body.data;
+
+    console.log(request.body);
+
+    const { action, afflictionName, _id } = request.body;
 
     const { data: character } = await axios(
       `https://sotdl-api-fetch.vercel.app/api/characters?_id=${_id}`
@@ -52,8 +55,11 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
     const data = await updateCollection("characters", newCharacterData, {
       _id: new ObjectId(_id),
     });
+
     response.status(200).send(data);
   } catch (e) {
+    console.log(e);
+
     response.status(504).send(e);
   }
 };

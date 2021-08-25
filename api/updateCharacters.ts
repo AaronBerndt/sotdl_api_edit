@@ -22,7 +22,7 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
       expertPath: documents.expertPath,
       masterPath: documents.masterPath,
       characteristics: [
-        ...documents.characteristics,
+        ...documents.characteristics.filter(({ id }: any) => id),
       ].map(({ value, ...rest }) => ({ ...rest, value: Number(value) })),
       talents: [],
       spells: documents.spells,

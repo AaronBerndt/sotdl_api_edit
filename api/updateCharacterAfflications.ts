@@ -1,7 +1,6 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import { updateCollection } from "../utilities/MongoUtils";
+import { fetchCollection, updateCollection } from "../utilities/MongoUtils";
 import microCors from "micro-cors";
-import axios from "axios";
 import { ObjectId } from "mongodb";
 
 const cors = microCors();
@@ -20,14 +19,14 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
 
     const { action, afflictionName, _id } = request.body;
 
-    const { data: character } = await axios(
-      `https://sotdl-api-fetch.vercel.app/api/characters?_id=${_id}`
-    );
+    const [characterData] = await fetchCollection("characters", {
+      _id: new ObjectId(_id),
+    });
 
     const {
       characterState: { afflictions, ...characterStateRest },
       ...rest
-    } = character;
+    } = characterData;
 
     const newAfflictionsList =
       action === "add"

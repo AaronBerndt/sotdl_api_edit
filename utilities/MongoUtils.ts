@@ -37,23 +37,33 @@ export async function updateCollection(
     console.log(
       `Attemping to update ${documentToUpdate.name} in ${collectionName}`
     );
-    await collection.updateOne(
-      filter,
-      {
-        $set: {
-          ...rest,
-        },
+    await collection.updateOne(filter, {
+      $set: {
+        ...rest,
       },
-      {
-        upsert: true,
-      }
-    );
+    });
 
     console.log(
       `Sucessfully updated ${documentToUpdate.name} in ${collectionName}`
     );
 
     return { message: `Sucessfully updated document in ${collectionName}` };
+  } catch (e) {
+    throw e;
+  }
+}
+
+export async function fetchCollection(collectionName: string, filters?: any) {
+  try {
+    if (uri === undefined) {
+      throw "URI is undefined";
+    }
+
+    const database = await connectToDatabase();
+    const collection = database.collection(collectionName);
+    const data = await collection.find(filters ? filters : {}).toArray();
+
+    return data;
   } catch (e) {
     throw e;
   }

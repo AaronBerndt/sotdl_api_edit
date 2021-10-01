@@ -15,7 +15,7 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
       return response.status(200).end();
     }
 
-    const { _id, days } = request.body;
+    const { _id, days } = request.body.data;
 
     const [characterData] = await fetchCollection("characters", {
       _id: new ObjectId(_id),

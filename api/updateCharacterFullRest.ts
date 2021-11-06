@@ -35,7 +35,7 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
       ...rest,
       characterState: {
         afflictions: [],
-        damage: damage - healingAmount < 0 ? 0 : damage - healingAmount,
+        damage: damage - healingAmount <= 0 ? 0 : damage - healingAmount,
         expended: [],
         overrides,
       },

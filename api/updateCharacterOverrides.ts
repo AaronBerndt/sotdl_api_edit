@@ -2,7 +2,7 @@ import { VercelRequest, VercelResponse } from "@vercel/node";
 import { fetchCollection, updateCollection } from "../utilities/MongoUtils";
 import microCors from "micro-cors";
 import { ObjectId } from "mongodb";
-import { max } from "lodash";
+import { max, tail } from "lodash";
 
 const cors = microCors();
 
@@ -21,7 +21,9 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
     if (request.method === "OPTIONS") {
       return response.status(200).end();
     }
-    const { overrideType, overrideValue, _id } = request.body.data;
+    console.log(request.body);
+    const { overrideType, overrideValue, _id, action } = request.body.data;
+    console.log(overrideType, overrideValue, _id);
 
     const [characterData] = await fetchCollection("characters", {
       _id: new ObjectId(_id),
@@ -35,18 +37,29 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
     const idArray: any = overrides.map(({ id }: Override) => id);
     const maxId: any = max(idArray);
 
+    const overrideValueList = overrides.filter(
+      ({ name }) => name === overrideType
+    );
+
+    const notOverideValueList = overrides.filter(
+      ({ name }) => name !== overrideType
+    );
+
     const newCharacterData = {
       ...rest,
-
       characterState: {
-        overrides: [
-          ...overrides,
-          {
-            id: overrides.length === 0 ? 1 : maxId + 1,
-            name: overrideType,
-            value: overrideValue,
-          },
-        ],
+        overrides:
+          action === "add"
+            ? [
+                ...overrides,
+                {
+                  id: overrides.length === 0 ? 1 : maxId + 1,
+                  name: overrideType,
+                  value: overrideValue,
+                },
+              ]
+            : [...notOverideValueList, ...tail(overrideValueList)],
+
         ...characterStateRest,
       },
     };
@@ -54,7 +67,8 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
     const data = await updateCollection("characters", newCharacterData, {
       _id: new ObjectId(_id),
     });
-    response.status(200).send(data);
+    console.log(newCharacterData);
+    response.status(200).send(newCharacterData);
   } catch (e) {
     response.status(504).send(e);
   }

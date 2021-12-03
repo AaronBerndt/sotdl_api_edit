@@ -15,28 +15,34 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
       return response.status(200).end();
     }
 
-    const { _id, days } = request.body.data;
+    const { _id, days, healingRate, health } = request.body.data;
 
     const [characterData] = await fetchCollection("characters", {
       _id: new ObjectId(_id),
     });
 
     const {
-      characterState: { overrides, damage },
+      characterState: { overrides, damage, ...characterStateRest },
       ...rest
     } = characterData;
 
-    const { health } = rest;
-
-    const healingRate = Math.floor(health / 4);
     const healingAmount = healingRate * days;
+
+    const newDamage =
+      damage + healingAmount > health
+        ? health
+        : damage + healingAmount < 0
+        ? 0
+        : damage + healingAmount;
 
     const newCharacterData = {
       ...rest,
       characterState: {
+        ...characterStateRest,
         afflictions: [],
         damage: damage - healingAmount <= 0 ? 0 : damage - healingAmount,
         expended: [],
+        injured: (health - newDamage) / health <= 0.5,
         overrides,
       },
     };
@@ -45,7 +51,7 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
       _id: new ObjectId(_id),
     });
 
-    response.status(200).send(data);
+    response.status(200).send(newCharacterData);
   } catch (e) {
     console.log(e);
 

@@ -26,7 +26,7 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
         ...documents.characteristics.filter(({ id }: any) => id),
       ].map(({ value, ...rest }) => ({ ...rest, value: Number(value) })),
       talents: [],
-      spells: documents.spells,
+      spells: documents.spells.map(({ name }) => name),
       traditions: documents.traditions,
       items: {
         weapons: documents.items

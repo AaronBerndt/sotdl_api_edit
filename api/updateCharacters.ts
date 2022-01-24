@@ -17,8 +17,11 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
     const newCharacterData: any = {
       _id,
       name: documents.name,
+      partyId: documents.partyId,
       level: documents.level,
       ancestry: documents.ancestry,
+      turnType: documents.turnType,
+      activeCombat: documents.activeCombat,
       novicePath: documents.novicePath,
       expertPath: documents.expertPath,
       masterPath: documents.masterPath,

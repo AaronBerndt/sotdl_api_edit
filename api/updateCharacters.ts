@@ -22,8 +22,6 @@ const handler = async (request: VercelRequest, response: VercelResponse) => {
       activeCombat: documents.activeCombat,
       level: documents.level,
       ancestry: documents.ancestry,
-      turnType: documents.turnType,
-      activeCombat: documents.activeCombat,
       novicePath: documents.novicePath,
       expertPath: documents.expertPath,
       masterPath: documents.masterPath,
